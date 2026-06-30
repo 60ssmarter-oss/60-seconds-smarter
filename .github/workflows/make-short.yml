@@ -1,0 +1,38 @@
+name: Make and Upload YouTube Short
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system packages
+        run: |
+          sudo apt update
+          sudo apt install -y ffmpeg espeak-ng
+
+      - name: Install requirements
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline
+        run: python run_pipeline.py
+
+      - name: Upload generated files
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-short
+          path: |
+            output/**/*.mp4
+            output/**/*.json
+            output/**/*.txt
+            *.mp4
+            *.json
+            *.txt
